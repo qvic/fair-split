@@ -29,7 +29,6 @@ class ExchangerTest {
         List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
 
         assertThat(returns).containsExactly(new Transfer(B, A, 100));
-        assertTrue(hasPositiveAmountTransfers(returns));
         assertTrue(isCorrectReturn(transfers, returns));
     }
 
@@ -42,7 +41,6 @@ class ExchangerTest {
         );
         List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
 
-        assertTrue(hasPositiveAmountTransfers(returns));
         assertTrue(isCorrectReturn(transfers, returns));
     }
 
@@ -56,13 +54,7 @@ class ExchangerTest {
         );
         List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
 
-        assertTrue(hasPositiveAmountTransfers(returns));
         assertTrue(isCorrectReturn(transfers, returns));
-    }
-
-    boolean hasPositiveAmountTransfers(List<Transfer> transfers) {
-        return transfers.stream()
-                .allMatch(transfer -> transfer.amount() > 0);
     }
 
     boolean isCorrectReturn(List<Transfer> transfers, List<Transfer> returns) {

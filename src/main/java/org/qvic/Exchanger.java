@@ -35,7 +35,7 @@ public class Exchanger {
                 creditsToReturn -= transferAmount;
             }
 
-            System.out.printf("Returned all credits to %s, returns: %s%n", dest.account(), returns);
+//            System.out.printf("Returned all credits to %s, returns: %s%n", dest.account(), returns);
         }
 
         return returns;
