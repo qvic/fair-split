@@ -11,6 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ExchangerTest {
 
+    public static final Account A = new Account("A");
+    public static final Account B = new Account("B");
+    public static final Account C = new Account("C");
+
     @Test
     void testEmpty() {
         List<Transfer> transfers = List.of();
@@ -21,10 +25,10 @@ class ExchangerTest {
 
     @Test
     void testSingle() {
-        List<Transfer> transfers = List.of(new Transfer(new Account("1"), new Account("2"), 100));
+        List<Transfer> transfers = List.of(new Transfer(A, B, 100));
         List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
 
-        assertThat(returns).containsExactly(new Transfer(new Account("2"), new Account("1"), 100));
+        assertThat(returns).containsExactly(new Transfer(B, A, 100));
         assertTrue(hasPositiveAmountTransfers(returns));
         assertTrue(isCorrectReturn(transfers, returns));
     }
@@ -32,9 +36,23 @@ class ExchangerTest {
     @Test
     void testCircular() {
         List<Transfer> transfers = List.of(
-                new Transfer(new Account("1"), new Account("2"), 100),
-                new Transfer(new Account("2"), new Account("3"), 100),
-                new Transfer(new Account("3"), new Account("1"), 100)
+                new Transfer(A, B, 100),
+                new Transfer(B, C, 100),
+                new Transfer(C, A, 100)
+        );
+        List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
+
+        assertTrue(hasPositiveAmountTransfers(returns));
+        assertTrue(isCorrectReturn(transfers, returns));
+    }
+
+    @Test
+    void testOther() {
+        List<Transfer> transfers = List.of(
+                new Transfer(A, B, 100),
+                new Transfer(B, C, 50),
+                new Transfer(C, A, 200),
+                new Transfer(A, C, 50)
         );
         List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
 
