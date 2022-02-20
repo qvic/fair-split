@@ -1,6 +1,7 @@
 package org.qvic;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -16,20 +17,18 @@ public class Exchanger {
     private static List<Transfer> calculateForGroup(List<Transfer> transfers) {
         Map<Account, Integer> map = BalanceUtils.calculateBalances(transfers);
 
-        // use treemap
-        TreeSet<AccountBalance> creditSources = selectBalancesByPredicate(map, i -> i > 0);
-        TreeSet<AccountBalance> creditDestinations = selectBalancesByPredicate(map, i -> i < 0);
+        PriorityQueue<AccountBalance> creditSources = selectBalancesByPredicate(map, i -> i > 0, i -> i);
+        PriorityQueue<AccountBalance> creditDestinations = selectBalancesByPredicate(map, i -> i < 0, i -> -i);
 
         List<Transfer> returns = new ArrayList<>();
 
         while (!creditDestinations.isEmpty()) {
-            AccountBalance dest = Objects.requireNonNull(creditDestinations.pollLast());
+            AccountBalance dest = Objects.requireNonNull(creditDestinations.poll());
             int creditsToReturn = dest.balance();
 
             while (creditsToReturn != 0) {
-                AccountBalance source = creditSources.ceiling(new AccountBalance(new Account(""), creditsToReturn));
-                if (source == null) source = creditSources.last();
-                creditSources.remove(source);
+                AccountBalance source = creditSources.poll();
+                if (source == null) throw new AssertionError("Incorrectly calculated balances");
 
                 int transferAmount = Math.min(source.balance(), creditsToReturn);
 
@@ -40,22 +39,21 @@ public class Exchanger {
                 returns.add(new Transfer(source.account(), dest.account(), transferAmount));
                 creditsToReturn -= transferAmount;
             }
-
-//            System.out.printf("Returned all credits to %s, returns: %s%n", dest.account(), returns);
         }
 
         return returns;
     }
 
-    private static TreeSet<AccountBalance> selectBalancesByPredicate(Map<Account, Integer> map, Predicate<Integer> predicate) {
+    private static PriorityQueue<AccountBalance> selectBalancesByPredicate(Map<Account, Integer> map,
+                                                                           Predicate<Integer> predicate,
+                                                                           Function<Integer, Integer> mapper) {
         return map.entrySet().stream()
                 .filter(entry -> predicate.test(entry.getValue()))
-                .map(entry -> new AccountBalance(entry.getKey(), Math.abs(entry.getValue())))
-                .collect(Collectors.toCollection(Exchanger::createTreeSet));
+                .map(entry -> new AccountBalance(entry.getKey(), mapper.apply(entry.getValue())))
+                .collect(Collectors.toCollection(Exchanger::createPriorityQueue));
     }
 
-    private static TreeSet<AccountBalance> createTreeSet() {
-        return new TreeSet<>(Comparator.comparing(AccountBalance::balance)
-                .thenComparing(AccountBalance::account));
+    private static PriorityQueue<AccountBalance> createPriorityQueue() {
+        return new PriorityQueue<>(Comparator.comparing(AccountBalance::balance).reversed());
     }
 }
