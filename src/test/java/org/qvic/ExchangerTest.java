@@ -3,25 +3,20 @@ package org.qvic;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.qvic.BalanceUtils.isCorrectReturn;
+import static org.qvic.TestAccounts.*;
+
 
 class ExchangerTest {
 
-    public static final Account A = new Account("A");
-    public static final Account B = new Account("B");
-    public static final Account C = new Account("C");
-    public static final Account D = new Account("D");
-    public static final Account E = new Account("E");
-    public static final Account F = new Account("F");
 
     @Test
     void testEmpty() {
         List<Transfer> transfers = List.of();
-        List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
+        List<Transfer> returns = Exchanger.calculateReturnTransfers(transfers);
 
         assertThat(returns).isEmpty();
     }
@@ -29,7 +24,7 @@ class ExchangerTest {
     @Test
     void testSingle() {
         List<Transfer> transfers = List.of(new Transfer(A, B, 100));
-        List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
+        List<Transfer> returns = Exchanger.calculateReturnTransfers(transfers);
 
         assertThat(returns).containsExactly(new Transfer(B, A, 100));
     }
@@ -41,7 +36,7 @@ class ExchangerTest {
                 new Transfer(B, C, 100),
                 new Transfer(C, A, 100)
         );
-        List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
+        List<Transfer> returns = Exchanger.calculateReturnTransfers(transfers);
 
         assertTrue(isCorrectReturn(transfers, returns));
         assertThat(returns.size()).isLessThanOrEqualTo(transfers.size());
@@ -55,7 +50,7 @@ class ExchangerTest {
                 new Transfer(C, A, 200),
                 new Transfer(A, C, 50)
         );
-        List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
+        List<Transfer> returns = Exchanger.calculateReturnTransfers(transfers);
 
         assertTrue(isCorrectReturn(transfers, returns));
         assertThat(returns.size()).isLessThanOrEqualTo(transfers.size());
@@ -69,18 +64,11 @@ class ExchangerTest {
                 new Transfer(A, D, 3),
                 new Transfer(E, F, 3)
         );
-        List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
+        List<Transfer> returns = Exchanger.calculateReturnTransfers(transfers);
 
         System.out.println(returns);
 
         assertTrue(isCorrectReturn(transfers, returns));
         assertThat(returns.size()).isLessThanOrEqualTo(transfers.size());
-    }
-
-    boolean isCorrectReturn(List<Transfer> transfers, List<Transfer> returns) {
-        List<Transfer> all = Stream.concat(transfers.stream(), returns.stream()).toList();
-        Map<Account, Integer> map = Utils.calculateBalances(all);
-        return map.entrySet().stream()
-                .allMatch(entry -> entry.getValue() == 0);
     }
 }

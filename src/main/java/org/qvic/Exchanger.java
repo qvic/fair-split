@@ -6,15 +6,15 @@ import java.util.stream.Collectors;
 
 public class Exchanger {
 
-    public List<Transfer> calculateReturnTransfers(List<Transfer> transfers) {
-        return Utils.separateAdjacencyGroups(transfers).stream()
-                .map(this::calculateReturnTransfersForGroup)
+    public static List<Transfer> calculateReturnTransfers(List<Transfer> transfers) {
+        return GraphUtils.separateAdjacencyGroups(transfers).stream()
+                .map(Exchanger::calculateForGroup)
                 .flatMap(Collection::stream)
                 .toList();
     }
 
-    private List<Transfer> calculateReturnTransfersForGroup(List<Transfer> transfers) {
-        Map<Account, Integer> map = Utils.calculateBalances(transfers);
+    private static List<Transfer> calculateForGroup(List<Transfer> transfers) {
+        Map<Account, Integer> map = BalanceUtils.calculateBalances(transfers);
 
         // use treemap
         TreeSet<AccountBalance> creditSources = selectBalancesByPredicate(map, i -> i > 0);
@@ -47,14 +47,14 @@ public class Exchanger {
         return returns;
     }
 
-    private TreeSet<AccountBalance> selectBalancesByPredicate(Map<Account, Integer> map, Predicate<Integer> predicate) {
+    private static TreeSet<AccountBalance> selectBalancesByPredicate(Map<Account, Integer> map, Predicate<Integer> predicate) {
         return map.entrySet().stream()
                 .filter(entry -> predicate.test(entry.getValue()))
                 .map(entry -> new AccountBalance(entry.getKey(), Math.abs(entry.getValue())))
-                .collect(Collectors.toCollection(this::createTreeSet));
+                .collect(Collectors.toCollection(Exchanger::createTreeSet));
     }
 
-    private TreeSet<AccountBalance> createTreeSet() {
+    private static TreeSet<AccountBalance> createTreeSet() {
         return new TreeSet<>(Comparator.comparing(AccountBalance::balance)
                 .thenComparing(AccountBalance::account));
     }

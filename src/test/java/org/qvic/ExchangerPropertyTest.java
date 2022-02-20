@@ -1,18 +1,13 @@
 package org.qvic;
 
-import net.jqwik.api.Arbitraries;
-import net.jqwik.api.Arbitrary;
-import net.jqwik.api.Combinators;
-import net.jqwik.api.ForAll;
-import net.jqwik.api.Property;
-import net.jqwik.api.Provide;
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.AfterProperty;
 import net.jqwik.api.lifecycle.BeforeProperty;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
+
+import static org.qvic.BalanceUtils.isCorrectReturn;
 
 class ExchangerPropertyTest {
 
@@ -30,7 +25,7 @@ class ExchangerPropertyTest {
 
     @Property(tries = 1000)
     boolean everyReturnIsCorrect(@ForAll("transfers") List<Transfer> transfers) {
-        List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
+        List<Transfer> returns = Exchanger.calculateReturnTransfers(transfers);
 
         saveStatistics(transfers, returns);
 
@@ -39,7 +34,7 @@ class ExchangerPropertyTest {
 
     @Property(tries = 1000)
     boolean everyReturnIsSmallerThanTransfer(@ForAll("transfers") List<Transfer> transfers) {
-        List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
+        List<Transfer> returns = Exchanger.calculateReturnTransfers(transfers);
 
         saveStatistics(transfers, returns);
 
@@ -55,14 +50,7 @@ class ExchangerPropertyTest {
                 .between(1, 100);
         Arbitrary<Transfer> transfer = Combinators.combine(account, account, amount)
                 .as(Transfer::new);
-        return transfer.list().ofMaxSize(100);
-    }
-
-    boolean isCorrectReturn(List<Transfer> transfers, List<Transfer> returns) {
-        List<Transfer> all = Stream.concat(transfers.stream(), returns.stream()).toList();
-        Map<Account, Integer> map = Utils.calculateBalances(all);
-        return map.entrySet().stream()
-                .allMatch(entry -> entry.getValue() == 0);
+        return transfer.list().ofMaxSize(1000);
     }
 
     void saveStatistics(List<Transfer> transfers, List<Transfer> returns) {
