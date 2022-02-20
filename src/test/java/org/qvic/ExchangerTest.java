@@ -14,6 +14,9 @@ class ExchangerTest {
     public static final Account A = new Account("A");
     public static final Account B = new Account("B");
     public static final Account C = new Account("C");
+    public static final Account D = new Account("D");
+    public static final Account E = new Account("E");
+    public static final Account F = new Account("F");
 
     @Test
     void testEmpty() {
@@ -29,7 +32,6 @@ class ExchangerTest {
         List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
 
         assertThat(returns).containsExactly(new Transfer(B, A, 100));
-        assertTrue(isCorrectReturn(transfers, returns));
     }
 
     @Test
@@ -42,6 +44,7 @@ class ExchangerTest {
         List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
 
         assertTrue(isCorrectReturn(transfers, returns));
+        assertThat(returns.size()).isLessThanOrEqualTo(transfers.size());
     }
 
     @Test
@@ -55,6 +58,23 @@ class ExchangerTest {
         List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
 
         assertTrue(isCorrectReturn(transfers, returns));
+        assertThat(returns.size()).isLessThanOrEqualTo(transfers.size());
+    }
+
+    @Test
+    void testReturnsShouldBeShorter() {
+        List<Transfer> transfers = List.of(
+                new Transfer(A, B, 1),
+                new Transfer(A, C, 1),
+                new Transfer(A, D, 3),
+                new Transfer(E, F, 3)
+        );
+        List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
+
+        System.out.println(returns);
+
+        assertTrue(isCorrectReturn(transfers, returns));
+        assertThat(returns.size()).isLessThanOrEqualTo(transfers.size());
     }
 
     boolean isCorrectReturn(List<Transfer> transfers, List<Transfer> returns) {

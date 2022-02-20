@@ -25,28 +25,34 @@ class ExchangerPropertyTest {
 
     @AfterProperty
     void afterProperty() {
-        System.out.printf("Average efficiency percentage: %.2f%n", calculateAverage(percentages));
+        System.out.printf("Average efficiency percentage: %.2f %%%n", calculateAverage(percentages));
     }
 
     @Property(tries = 1000)
     boolean everyReturnIsCorrect(@ForAll("transfers") List<Transfer> transfers) {
-        System.out.println("transfers = " + transfers);
         List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
-        System.out.println("returns = " + returns);
-        System.out.println();
 
         saveStatistics(transfers, returns);
 
         return isCorrectReturn(transfers, returns);
     }
 
+    @Property(tries = 1000)
+    boolean everyReturnIsSmallerThanTransfer(@ForAll("transfers") List<Transfer> transfers) {
+        List<Transfer> returns = new Exchanger().calculateReturnTransfers(transfers);
+
+        saveStatistics(transfers, returns);
+
+        return returns.size() <= transfers.size();
+    }
+
     @Provide("transfers")
     Arbitrary<List<Transfer>> transfers() {
         Arbitrary<Account> account = Arbitraries.strings()
-                .withCharRange('A', 'Z').ofLength(2)
+                .withCharRange('A', 'Z').ofLength(1)
                 .map(Account::new);
         Arbitrary<Integer> amount = Arbitraries.integers()
-                .between(1, 1000);
+                .between(1, 100);
         Arbitrary<Transfer> transfer = Combinators.combine(account, account, amount)
                 .as(Transfer::new);
         return transfer.list().ofMaxSize(100);

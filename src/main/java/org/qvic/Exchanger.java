@@ -1,19 +1,22 @@
 package org.qvic;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Exchanger {
 
     public List<Transfer> calculateReturnTransfers(List<Transfer> transfers) {
+        return Utils.separateAdjacencyGroups(transfers).stream()
+                .map(this::calculateReturnTransfersForGroup)
+                .flatMap(Collection::stream)
+                .toList();
+    }
+
+    private List<Transfer> calculateReturnTransfersForGroup(List<Transfer> transfers) {
         Map<Account, Integer> map = Utils.calculateBalances(transfers);
 
+        // use treemap
         TreeSet<AccountBalance> creditSources = selectBalancesByPredicate(map, i -> i > 0);
         TreeSet<AccountBalance> creditDestinations = selectBalancesByPredicate(map, i -> i < 0);
 
@@ -24,7 +27,10 @@ public class Exchanger {
             int creditsToReturn = dest.balance();
 
             while (creditsToReturn != 0) {
-                AccountBalance source = Objects.requireNonNull(creditSources.pollLast());
+                AccountBalance source = creditSources.ceiling(new AccountBalance(new Account(""), creditsToReturn));
+                if (source == null) source = creditSources.last();
+                creditSources.remove(source);
+
                 int transferAmount = Math.min(source.balance(), creditsToReturn);
 
                 if (source.balance() > transferAmount) {

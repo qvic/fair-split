@@ -10,6 +10,6 @@ public record Transfer(Account from, Account to, int amount) {
 
     @Override
     public String toString() {
-        return "%s -> %s (%d)".formatted(from.name(), to.name(), amount);
+        return "%s -> %s: %d".formatted(from.name(), to.name(), amount);
     }
 }
