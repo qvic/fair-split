@@ -1,6 +1,7 @@
 package org.qvic;
 
 import org.junit.jupiter.api.Test;
+import org.qvic.model.Transfer;
 
 import java.util.List;
 

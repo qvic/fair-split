@@ -1,5 +1,7 @@
 package org.qvic;
 
+import org.qvic.model.Transfer;
+
 import java.util.ArrayList;
 import java.util.List;
 

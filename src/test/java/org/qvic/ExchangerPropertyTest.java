@@ -3,6 +3,8 @@ package org.qvic;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.AfterProperty;
 import net.jqwik.api.lifecycle.BeforeProperty;
+import org.qvic.model.Account;
+import org.qvic.model.Transfer;
 
 import java.util.List;
 

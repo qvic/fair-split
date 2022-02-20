@@ -1,5 +1,7 @@
 package org.qvic;
 
+import org.qvic.model.Account;
+
 class TestAccounts {
 
     public static final Account A = new Account("A");

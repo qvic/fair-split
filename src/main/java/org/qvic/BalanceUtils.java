@@ -1,5 +1,8 @@
 package org.qvic;
 
+import org.qvic.model.Account;
+import org.qvic.model.Transfer;
+
 import java.util.*;
 import java.util.stream.Stream;
 

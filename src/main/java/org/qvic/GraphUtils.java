@@ -1,5 +1,8 @@
 package org.qvic;
 
+import org.qvic.model.Account;
+import org.qvic.model.Transfer;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

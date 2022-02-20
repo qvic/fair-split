@@ -1,4 +1,4 @@
-package org.qvic;
+package org.qvic.model;
 
 public record Account(String name) implements Comparable<Account> {
 

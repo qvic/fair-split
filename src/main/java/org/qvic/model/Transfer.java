@@ -1,4 +1,4 @@
-package org.qvic;
+package org.qvic.model;
 
 public record Transfer(Account from, Account to, int amount) {
 

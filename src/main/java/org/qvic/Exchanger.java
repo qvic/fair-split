@@ -1,5 +1,9 @@
 package org.qvic;
 
+import org.qvic.model.Account;
+import org.qvic.model.AccountBalance;
+import org.qvic.model.Transfer;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
