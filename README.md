@@ -4,8 +4,8 @@ Calculate efficient way to return money based on borrowing history.
 
 ```mermaid
 graph LR;
-   A(John) -->|100| B(Alice);
-   B -->|200| C(Bob);
+   A -->|100| B;
+   B -->|200| C;
    C -->|150| A;
 ```
 
@@ -31,7 +31,10 @@ John, Alice, 50
 Use `--graph` option to create dot graphs.
 Then use, for example, `dot -Tsvg in.csv.dot -o in.svg` to create svg from dot file.
 
-For input above, this will produce such diagrams:
+For input and output from above, next diagrams will be produced:
+
+![in](https://user-images.githubusercontent.com/8373424/154976714-759c4e8e-3d76-4e55-a1a2-48128b7039a1.svg)
+![out](https://user-images.githubusercontent.com/8373424/154976761-10131c15-fe0a-41b1-bdea-4d7f6efc81de.svg)
 
 ### Build from source
 
