@@ -35,4 +35,14 @@ public class IOUtils {
     private static String asString(Transfer transfer) {
         return "%s, %s, %d".formatted(transfer.from().name(), transfer.to().name(), transfer.amount());
     }
+
+    public static void writeGraphDotFile(String filename, List<Transfer> transfers) throws IOException {
+        var result = new StringBuilder();
+        result.append("digraph {\n");
+        for (Transfer t : transfers) {
+            result.append("\"%s\" -> \"%s\" [ label=\"%d\" ];\n".formatted(t.from().name(), t.to().name(), t.amount()));
+        }
+        result.append("}");
+        Files.writeString(Path.of(filename), result);
+    }
 }

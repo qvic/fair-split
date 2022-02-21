@@ -2,6 +2,13 @@
 
 Calculate efficient way to return money based on borrowing history.
 
+```mermaid
+graph LR;
+   A(John) -->|100| B(Alice);
+   B -->|200| C(Bob);
+   C -->|150| A;
+```
+
 Tested using property-based testing with [jqwik](https://github.com/jlink/jqwik).
 
 ### Example
@@ -21,26 +28,14 @@ Bob, Alice, 50
 John, Alice, 50
 ```
 
-**Diagrams**
+Use `--graph` option to create dot graphs.
+Then use, for example, `dot -Tsvg in.csv.dot -o in.svg` to create svg from dot file.
 
-- Input
-```mermaid
-graph LR;
-   A(John) -->|100| B(Alice);
-   B -->|200| C(Bob);
-   C -->|150| A;
-```
-
-- Output
-```mermaid
-graph LR;
-   C(Bob) -->|50| B(Alice);
-   A(John) -->|50| B;
-```
+For input above, this will produce such diagrams:
 
 ### Build from source
 
 ```shell
 mvn clean package
-java -jar target/app.jar in.csv out.csv
+java -jar target/app.jar in.csv out.csv --graph
 ```
