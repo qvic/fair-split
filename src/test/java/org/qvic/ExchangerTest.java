@@ -13,7 +13,6 @@ import static org.qvic.TestAccounts.*;
 
 class ExchangerTest {
 
-
     @Test
     void testEmpty() {
         List<Transfer> transfers = List.of();
@@ -40,7 +39,7 @@ class ExchangerTest {
         List<Transfer> returns = Exchanger.calculateReturnTransfers(transfers);
 
         assertTrue(isCorrectReturn(transfers, returns));
-        assertThat(returns.size()).isLessThanOrEqualTo(transfers.size());
+        assertThat(returns).isEmpty();
     }
 
     @Test
@@ -58,11 +57,13 @@ class ExchangerTest {
     }
 
     @Test
-    void testReturnsShouldBeShorter() {
+    void testReturnsWithTwoAdjacencyGroups() {
         List<Transfer> transfers = List.of(
+                // group 1
                 new Transfer(A, B, 1),
                 new Transfer(A, C, 1),
                 new Transfer(A, D, 3),
+                // group 2
                 new Transfer(E, F, 3)
         );
         List<Transfer> returns = Exchanger.calculateReturnTransfers(transfers);
