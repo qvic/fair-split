@@ -21,6 +21,23 @@ Bob, Alice, 50
 John, Alice, 50
 ```
 
+**Diagrams**
+
+- Input
+```mermaid
+graph LR;
+   A(John) -->|100| B(Alice);
+   B -->|200| C(Bob);
+   C -->|150| A;
+```
+
+- Output
+```mermaid
+graph LR;
+   C(Bob) -->|50| B(Alice);
+   A(John) -->|50| B;
+```
+
 ### Build from source
 
 ```shell
