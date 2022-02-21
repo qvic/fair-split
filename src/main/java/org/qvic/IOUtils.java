@@ -12,7 +12,12 @@ public class IOUtils {
 
     public static List<Transfer> readFromFile(String filename) throws IOException {
         return Files.readAllLines(Path.of(filename)).stream()
-                .map(IOUtils::fromLine)
+                .<Transfer>mapMulti((line, consumer) -> {
+                    var trim = line.trim();
+                    if (!trim.isEmpty()) {
+                        consumer.accept(IOUtils.fromLine(trim));
+                    }
+                })
                 .toList();
     }
 
