@@ -11,8 +11,8 @@ public class BalanceUtils {
     public static Map<Account, Integer> calculateBalances(List<Transfer> transfers) {
         var map = new HashMap<Account, Integer>();
         for (Transfer transfer : transfers) {
-            map.put(transfer.to(), map.getOrDefault(transfer.to(), 0) + transfer.amount());
-            map.put(transfer.from(), map.getOrDefault(transfer.from(), 0) - transfer.amount());
+            map.put(transfer.to(), Math.addExact(map.getOrDefault(transfer.to(), 0), transfer.amount()));
+            map.put(transfer.from(), Math.subtractExact(map.getOrDefault(transfer.from(), 0), transfer.amount()));
         }
         return map;
     }
