@@ -19,10 +19,10 @@ public class Exchanger {
     }
 
     private static List<Transfer> calculateForGroup(List<Transfer> transfers) {
-        Map<Account, Integer> map = BalanceUtils.calculateBalances(transfers);
+        var balances = BalanceUtils.calculateBalances(transfers);
 
-        PriorityQueue<AccountBalance> creditSources = selectBalancesByPredicate(map, i -> i > 0, i -> i);
-        PriorityQueue<AccountBalance> creditDestinations = selectBalancesByPredicate(map, i -> i < 0, i -> -i);
+        var creditSources = selectBalancesByPredicate(balances, i -> i > 0, i -> i);
+        var creditDestinations = selectBalancesByPredicate(balances, i -> i < 0, i -> -i);
 
         List<Transfer> returns = new ArrayList<>();
 
@@ -51,13 +51,14 @@ public class Exchanger {
     private static PriorityQueue<AccountBalance> selectBalancesByPredicate(Map<Account, Integer> map,
                                                                            Predicate<Integer> predicate,
                                                                            Function<Integer, Integer> mapper) {
-        return map.entrySet().stream()
-                .filter(entry -> predicate.test(entry.getValue()))
-                .map(entry -> new AccountBalance(entry.getKey(), mapper.apply(entry.getValue())))
-                .collect(Collectors.toCollection(Exchanger::createPriorityQueue));
-    }
+        var queue = new PriorityQueue<>(map.size(),
+                Comparator.comparing(AccountBalance::balance).reversed());
 
-    private static PriorityQueue<AccountBalance> createPriorityQueue() {
-        return new PriorityQueue<>(Comparator.comparing(AccountBalance::balance).reversed());
+        for (Map.Entry<Account, Integer> entry : map.entrySet()) {
+            if (predicate.test(entry.getValue())) {
+                queue.add(new AccountBalance(entry.getKey(), mapper.apply(entry.getValue())));
+            }
+        }
+        return queue;
     }
 }
