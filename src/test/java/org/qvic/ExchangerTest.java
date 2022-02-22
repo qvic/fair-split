@@ -68,8 +68,6 @@ class ExchangerTest {
         );
         List<Transfer> returns = Exchanger.calculateReturnTransfers(transfers);
 
-        System.out.println(returns);
-
         assertTrue(isCorrectReturn(transfers, returns));
         assertThat(returns.size()).isLessThanOrEqualTo(transfers.size());
     }

@@ -11,10 +11,10 @@ public class Main {
         var argQueue = new ArrayDeque<>(Arrays.asList(args));
         String inFile = Optional.ofNullable(argQueue.poll())
                 .map(String::trim)
-                .orElseThrow(() -> new IllegalArgumentException("Input file was not supplied"));
+                .orElseThrow(() -> new IllegalArgumentException("Input file path was not supplied"));
         String outFile = Optional.ofNullable(argQueue.poll())
                 .map(String::trim)
-                .orElseThrow(() -> new IllegalArgumentException("Output file was not supplied"));
+                .orElseThrow(() -> new IllegalArgumentException("Output file path was not supplied"));
         boolean graphOption = Optional.ofNullable(argQueue.poll())
                 .map(String::trim)
                 .map(s -> s.equals("--graph"))
