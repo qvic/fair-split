@@ -2,9 +2,6 @@ package org.qvic.model;
 
 import org.qvic.result.Result;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public record Transfer(Account from, Account to, int amount) {
 
     public Transfer {
@@ -13,22 +10,42 @@ public record Transfer(Account from, Account to, int amount) {
         }
     }
 
-    public static Result<Transfer> create(String from, String to, int amount) {
-        List<String> errors = new ArrayList<>();
-        if (amount <= 0) {
-            errors.add("Transfer amount should be positive");
+    public static Result<Transfer> fromLine(String line) {
+        if (line == null) {
+            return Result.err("Line is null");
         }
-        if (from == null || from.isEmpty()) {
-            errors.add("From account name should not be empty");
-        }
-        if (to == null || to.isEmpty()) {
-            errors.add("To account name should not be empty");
+        var split = line.split(",", 3);
+        if (split.length < 3) {
+            return Result.err("Malformed line");
         }
 
-        if (errors.isEmpty()) {
-            return Result.ok(new Transfer(new Account(from), new Account(to), amount));
+        var from = parseAccountName(split[0], "From");
+        var to = parseAccountName(split[1], "To");
+        var amount = parseAmount(split[2]);
+
+        return Result.coalesce3(from, to, amount,
+                (f, t, a) -> new Transfer(new Account(f), new Account(t), a),
+                errors -> String.join("; ", errors));
+    }
+
+    private static Result<Integer> parseAmount(String str) {
+        try {
+            var amount = Integer.parseInt(str.trim());
+            if (amount <= 0) {
+                return Result.err("Transfer amount should be positive");
+            }
+            return Result.ok(amount);
+        } catch (NumberFormatException e) {
+            return Result.err("Could not parse transfer amount");
+        }
+    }
+
+    private static Result<String> parseAccountName(String str, String which) {
+        var trim = str.trim();
+        if (trim.isEmpty()) {
+            return Result.err(which + " account name should not be empty");
         } else {
-            return Result.err(String.join("; ", errors));
+            return Result.ok(trim);
         }
     }
 
