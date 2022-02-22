@@ -3,11 +3,12 @@ package org.qvic;
 import org.qvic.model.Account;
 import org.qvic.model.AccountBalance;
 import org.qvic.model.Transfer;
+import org.qvic.util.BalanceUtils;
+import org.qvic.util.GraphUtils;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class Exchanger {
 

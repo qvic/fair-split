@@ -8,7 +8,7 @@ import org.qvic.model.Transfer;
 
 import java.util.List;
 
-import static org.qvic.BalanceUtils.isCorrectReturn;
+import static org.qvic.util.BalanceUtils.isCorrectReturn;
 
 class ExchangerPropertyTest {
 

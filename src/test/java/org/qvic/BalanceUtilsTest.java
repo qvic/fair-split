@@ -2,6 +2,7 @@ package org.qvic;
 
 import org.junit.jupiter.api.Test;
 import org.qvic.model.Transfer;
+import org.qvic.util.BalanceUtils;
 
 import java.util.List;
 import java.util.Map;

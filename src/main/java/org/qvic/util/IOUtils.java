@@ -1,4 +1,4 @@
-package org.qvic;
+package org.qvic.util;
 
 import org.qvic.model.Transfer;
 import org.qvic.result.Result;
