@@ -38,7 +38,23 @@ For input and output from above, next diagrams will be produced:
 
 ### Build from source
 
+Requires JDK 17.
+
 ```shell
 mvn clean package
 java -jar target/app.jar in.csv out.csv --graph
+```
+
+**To create native executable**
+
+Install GraalVM:
+```shell
+sdk install java 22.0.0.2.r17-grl
+gu install native-image
+```
+
+Build and run:
+```shell
+mvn clean package native-image:native-image
+target/app in.csv out.csv --graph
 ```
